@@ -1,44 +1,44 @@
-const fs = require('fs');
-const input = fs.readFileSync("/dev/stdin").toString().trim().split("\n");
-input.pop();
-const factors = input.map(v=>v.split(' ').map(v=>+v));
-let memo = [];
+let fs = require('fs')
 
-for(let i =0; i<=101; i++){
-    memo[i]=[];
-    for(let j =0; j<=101; j++){
-        memo[i][j]=[];
-        for(let k=0; k<=101; k++){
-            memo[i][j][k]=0;
+let input = fs.readFileSync('dev/stdin').toString().trim().split('\n').map(n => n.split(' ').map(m => Number(m)));
+
+let N = input.length - 1;
+let memo = [];
+for(let i = 0; i < 51; i++){
+    memo[i] = [];
+    for(let j = 0; j < 51; j++){
+        memo[i][j] = [];
+        for(let k = 0; k < 51; k++){
+            memo[i][j][k] = 0;
         }
     }
 }
-memo[50][50][50] = 1;
 
-factors.forEach(v=>{
-    const answer = w(v[0]+50,v[1]+50,v[2]+50)
-    console.log(`w(${v[0]}, ${v[1]}, ${v[2]}) = ${answer}`)
-})
+memo[0][0][0] = 1;
 
-
-function w(a,b,c){
-    if(memo[a][b][c]!=0){
+function w(a, b, c){
+    if(a <= 0 || b <= 0 || c <= 0){
+        return 1;
+    }    
+    else if(memo[a][b][c] !== 0){
         return memo[a][b][c];
-    }else{
-        if (a <= 50 || b <= 50 || c <= 50){
-            return 1;
-        }
-        
-        else if(a > 70 || b > 70 || c > 70) 
-        return w(70, 70, 70)
-        
-        else if (a < b && b < c ){
-            memo[a][b][c]=w(a, b, c-1) + w(a, b-1, c-1) - w(a, b-1, c);
-        }
-        
-        else {
-            memo[a][b][c]=w(a-1, b, c) + w(a-1, b-1, c) + w(a-1, b, c-1) - w(a-1, b-1, c-1);
-        }
     }
+    else if(a > 20 || b > 20 || c > 20){
+        memo[a][b][c] = w(20, 20, 20);
+    }
+    else if(a < b && b < c){
+        memo[a][b][c] = w(a, b, c-1) + w(a, b-1, c-1) - w(a, b-1, c);
+    } else {
+        memo[a][b][c] = w(a-1, b, c) + w(a-1, b-1, c) + w(a-1, b, c-1) - w(a-1, b-1, c-1);
+    };
     return memo[a][b][c];
 }
+
+function printW(a, b, c){
+    let d = w(a, b, c);
+    return `w(${a}, ${b}, ${c}) = ${d}`
+};
+
+for(let i = 0; i < N; i++){
+    console.log(printW(input[i][0], input[i][1], input[i][2]))
+};
